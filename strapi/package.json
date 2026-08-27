@@ -1,5 +1,5 @@
 {
-  "name": "strapi-quickstart",
+  "name": "strapi",
   "version": "0.1.0",
   "private": true,
   "description": "A Strapi application",
@@ -19,7 +19,7 @@
     "@strapi/plugin-cloud": "5.52.2",
     "@strapi/plugin-users-permissions": "5.52.2",
     "@strapi/strapi": "5.52.2",
-    "pg": "8.20.0",
+    "better-sqlite3": "12.8.0",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^6.30.3",
@@ -36,7 +36,7 @@
     "npm": ">=6.0.0"
   },
   "strapi": {
-    "uuid": "ead483bf-c66e-41d2-b7f8-e5b1d91a28cf",
-    "installId": "46c8f1a0d84a83e319bc04f583a9ad8f5c626056911fdf84bc6d19f7d1ce9137"
+    "uuid": "0775ea76-d182-4cbf-b496-0bd63272a2fa",
+    "installId": "20428c7f57e4d0dae12e777df5d436879fb2be6b7427109231a3e68f682deb52"
   }
 }
