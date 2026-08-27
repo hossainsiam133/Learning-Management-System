@@ -1,4 +1,6 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Learning Management System
+
+This is an E-learning platform with NextJS16, Headless Strapi CMS.
 
 ## Getting Started
 
