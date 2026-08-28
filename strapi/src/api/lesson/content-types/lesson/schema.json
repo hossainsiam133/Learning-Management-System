@@ -1,10 +1,10 @@
 {
   "kind": "collectionType",
-  "collectionName": "courses",
+  "collectionName": "lessons",
   "info": {
-    "singularName": "course",
-    "pluralName": "courses",
-    "displayName": "Courses"
+    "singularName": "lesson",
+    "pluralName": "lessons",
+    "displayName": "Lessons"
   },
   "options": {
     "draftAndPublish": true
@@ -17,15 +17,17 @@
     "description": {
       "type": "text"
     },
+    "video_url": {
+      "type": "string"
+    },
+    "duration": {
+      "type": "string"
+    },
     "user": {
       "type": "relation",
       "relation": "oneToOne",
-      "target": "plugin::users-permissions.user"
-    },
-    "lessons": {
-      "type": "relation",
-      "relation": "oneToMany",
-      "target": "api::lesson.lesson"
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "lesson"
     }
   }
 }

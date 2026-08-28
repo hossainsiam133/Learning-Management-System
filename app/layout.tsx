@@ -14,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const metadata: Metadata = {
-    title: "LMS",
-    description: "This is E-Learning Management System",
+    title: "CuriousCourses",
+    description: "Frontend courses for the web dev learner",
     keywords: "e-learning, video courses, software development, programming",
   };
 
@@ -92,7 +92,7 @@ export default function RootLayout({
               currentMode={mode}
               showLabel={false}
             />
-            {children}
+            <main style={{ padding: "2rem" }}>{children}</main>
           </body>
         </ThemeProvider>
       </html>
