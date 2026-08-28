@@ -26,7 +26,7 @@ const useUserData = () => {
 
         window.addEventListener('storage', storageEventListener);
 
-        // Clean up the event listener when the component unmounts
+        // Clean up the event listener 
         return () => {
             window.removeEventListener('storage', storageEventListener);
         };
