@@ -1,29 +1,32 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+'use client';
+import { Metadata } from "next";
+import React from 'react';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Header from "./components/Header/Header";
+import useUserData from "./hooks/useUserData";
+const darkTheme = createTheme({
+  palette: {
+    mode: 'dark', // Enable dark mode
+  },
 });
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-  title: "LMS",
-  description: "This is an E-Learning Management System",
-};
-
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const metadata: Metadata = {
+    title: 'LMS',
+    description: 'The E-Learning Management System',
+  }
+  const userData = useUserData();
   return (
-    <html
-      lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className="min-h-full flex flex-col">{children}</body>
+    <html lang="en">
+      <body style={{ background: 'black', color: 'white', maxWidth: '80rem', margin: 'auto' }}>
+        <ThemeProvider theme={darkTheme}>
+          <Header userData={userData} />
+          {children}
+        </ThemeProvider>
+      </body>
     </html>
   );
 }
