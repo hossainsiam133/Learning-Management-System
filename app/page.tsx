@@ -19,7 +19,7 @@ export default function Home() {
         Learning Management System
         <Button variant='contained' onClick={() => fetchQuery()}>Courses</Button>
       </div>
-      <div>{course?.attributes?.title}</div>
+      <div>{course?.title}</div>
     </main>
   );
 }

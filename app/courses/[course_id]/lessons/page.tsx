@@ -8,24 +8,24 @@ const LessonsPage = () => {
   const courses = useFetchCoursesData();
 
   const lessonAmount = (id: number) =>
-    courses[id].attributes?.lessons?.data.length;
+    courses[id].lessons?.data.length;
   return (
     <div>
       <h1>All Lessons</h1>
       <ul>
-        {courses.map((course: any, id: number) => {
-          course.attributes?.lessons?.data
+        {courses.map((course: any, id: number) =>
+          course.lessons?.data
             ?.slice(0, lessonAmount(id))
             .map((lesson: any) => (
               <li key={lesson.id}>
                 <Link href={`/courses/${course.id}/lessons/${lesson.id}`}>
                   <Typography color={"primary"}>
-                    Lesson: {lesson.attributes.title}
+                    Lesson: {lesson.title}
                   </Typography>
                 </Link>
               </li>
-            ));
-        })}
+            ))
+        )}
       </ul>
     </div>
   );
