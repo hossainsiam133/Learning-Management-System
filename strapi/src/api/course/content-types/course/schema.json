@@ -26,6 +26,16 @@
       "type": "relation",
       "relation": "oneToMany",
       "target": "api::lesson.lesson"
+    },
+    "thumbnail": {
+      "type": "media",
+      "multiple": false,
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ]
     }
   }
 }

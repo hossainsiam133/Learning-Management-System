@@ -7,6 +7,26 @@ const nextConfig = {
       transform: "@mui/icons-material/{{member}}",
     },
   },
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "1337",
+      },
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "1337",
+      },
+      {
+        protocol: "http",
+        hostname: "::1",
+        port: "1337",
+      },
+    ],
+    dangerouslyAllowLocalIP: true,
+  },
 };
 
 module.exports = nextConfig;
