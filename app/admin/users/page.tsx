@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { getStrapiApiUrl } from "@/app/lib/strapiClient";
 import {
   Alert,
   Button,
@@ -88,7 +89,7 @@ const AdminUsersPage = () => {
 
   const fetchRoles = async (token: string) => {
     try {
-      const response = await fetch("http://localhost:1337/api/users-permissions/roles", {
+      const response = await fetch(getStrapiApiUrl("/users-permissions/roles"), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -123,7 +124,7 @@ const AdminUsersPage = () => {
     setError("");
 
     try {
-      const response = await fetch("http://localhost:1337/api/users?populate=role", {
+      const response = await fetch(getStrapiApiUrl("/users?populate=role"), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -213,7 +214,7 @@ const AdminUsersPage = () => {
     setSuccess("");
 
     try {
-      const response = await fetch("http://localhost:1337/api/users", {
+      const response = await fetch(getStrapiApiUrl("/users"), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -291,7 +292,7 @@ const AdminUsersPage = () => {
         payload.password = form.password;
       }
 
-      const response = await fetch(`http://localhost:1337/api/users/${editingId}`, {
+      const response = await fetch(getStrapiApiUrl(`/users/${editingId}`), {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -341,7 +342,7 @@ const AdminUsersPage = () => {
     setSuccess("");
 
     try {
-      const response = await fetch(`http://localhost:1337/api/users/${id}`, {
+      const response = await fetch(getStrapiApiUrl(`/users/${id}`), {
         method: "DELETE",
         headers: {
           Authorization: `Bearer ${token}`,

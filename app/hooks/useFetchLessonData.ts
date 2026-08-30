@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { getStrapiApiUrl } from "@/app/lib/strapiClient";
 
 const useFetchLessonData = (lessonId: any) => {
   const [lesson, setLesson] = useState(null);
@@ -7,7 +8,7 @@ const useFetchLessonData = (lessonId: any) => {
     async function fetchLessonData() {
       try {
         const response = await fetch(
-          `http://localhost:1337/api/lessons/${lessonId}`,
+          getStrapiApiUrl(`/lessons/${lessonId}`),
         );
 
         if (!response.ok) {

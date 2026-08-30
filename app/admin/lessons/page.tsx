@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { getStrapiApiUrl } from "@/app/lib/strapiClient";
 import {
   Alert,
   Button,
@@ -46,8 +47,6 @@ const emptyForm: LessonFormState = {
   duration: "",
 };
 
-const apiUrl = "http://localhost:1337/api";
-
 const AdminLessonsPage = () => {
   const router = useRouter();
   const currentUser = (() => {
@@ -80,7 +79,7 @@ const AdminLessonsPage = () => {
   };
 
   const request = async (path: string, token: string, options: RequestInit = {}) => {
-    const response = await fetch(`${apiUrl}${path}`, {
+    const response = await fetch(getStrapiApiUrl(path), {
       ...options,
       headers: {
         Authorization: `Bearer ${token}`,

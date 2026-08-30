@@ -7,10 +7,11 @@ import Button from "@mui/material/Button";
 import CourseGrid from "@/app/components/CourseGrid/CourseGrid";
 import useFetchCoursesData from "./hooks/useFetchCourseData";
 import wrapper from './courses/courses.module.scss';
+import { getStrapiApiUrl } from "./lib/strapiClient";
 export default function Home() {
   const [course, setCourseData] = useState();
   async function fetchQuery() {
-    const base_url = `http://localhost:1337/api`;
+    const base_url = getStrapiApiUrl("");
     const response = await fetch(`${base_url}/courses`);
     const data = await response.json();
     setCourseData(data.data[0]);

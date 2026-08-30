@@ -54,7 +54,9 @@ const CourseCard = (props: CourseCardProps) => {
       }
 
       const courseResponse = await fetch(
-        `http://localhost:1337/api/courses/${courseKey}?populate=enrolledUsers`,
+        process.env.NEXT_PUBLIC_STRAPI_URL
+          ? `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/courses/${courseKey}?populate=enrolledUsers`
+          : `http://localhost:1337/api/courses/${courseKey}?populate=enrolledUsers`,
         {
           headers: {
             Authorization: `Bearer ${parsedUserData.authToken}`,
@@ -78,7 +80,9 @@ const CourseCard = (props: CourseCardProps) => {
       }
 
       const updateResponse = await fetch(
-        `http://localhost:1337/api/courses/${courseKey}`,
+        process.env.NEXT_PUBLIC_STRAPI_URL
+          ? `${process.env.NEXT_PUBLIC_STRAPI_URL}/api/courses/${courseKey}`
+          : `http://localhost:1337/api/courses/${courseKey}`,
         {
           method: "PUT",
           headers: {

@@ -1,9 +1,10 @@
 export default async (req: any, res: any) => {
   if (req.method === 'POST') {
     const { username, password } = req.body;
+    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
 
     // Send a POST request to Strapi's login endpoint
-    const response = await fetch(`http://localhost:1337/api/auth/local`, {
+    const response = await fetch(`${strapiUrl}/api/auth/local`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

@@ -65,12 +65,13 @@ const Admin = () => {
           ? `?populate=*&filters[user][id][$eq]=${currentUserId}`
           : "?populate=*";
 
+        const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
         const [usersResponse, coursesResponse, lessonsResponse] = await Promise.all([
           isInstructor
             ? Promise.resolve({ ok: true, json: async () => [] })
-            : fetch("http://localhost:1337/api/users", { headers }),
-          fetch(`http://localhost:1337/api/courses${courseFilter}`, { headers }),
-          fetch(`http://localhost:1337/api/lessons${lessonFilter}`, { headers }),
+            : fetch(`${strapiUrl}/api/users`, { headers }),
+          fetch(`${strapiUrl}/api/courses${courseFilter}`, { headers }),
+          fetch(`${strapiUrl}/api/lessons${lessonFilter}`, { headers }),
         ]);
 
         if (!usersResponse.ok && usersResponse.status !== 401) {

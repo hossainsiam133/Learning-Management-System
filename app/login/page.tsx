@@ -41,7 +41,8 @@ const LoginPage: React.FC = () => {
 
   const getRoleName = async (token: string): Promise<string | null> => {
     try {
-      const response = await fetch("http://localhost:1337/api/users/me?populate=role", {
+      const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+      const response = await fetch(`${strapiUrl}/api/users/me?populate=role`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -64,7 +65,8 @@ const LoginPage: React.FC = () => {
     setLoginError("");
 
     try {
-      const response = await fetch("http://localhost:1337/api/auth/local", {
+      const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
+      const response = await fetch(`${strapiUrl}/api/auth/local`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ identifier, password }),

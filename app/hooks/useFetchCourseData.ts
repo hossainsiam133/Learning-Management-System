@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import Cookies from "js-cookie";
+import { getStrapiApiUrl } from "@/app/lib/strapiClient";
 
 type UseFetchCoursesOptions = {
   authOnly?: boolean;
@@ -32,7 +33,7 @@ const useFetchCoursesData = (
         }
 
         const response = await fetch(
-          `http://localhost:1337/api/courses?${params.toString()}`,
+          `${getStrapiApiUrl("/courses")}?${params.toString()}`,
           authToken
             ? {
                 headers: {

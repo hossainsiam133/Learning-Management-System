@@ -1,9 +1,10 @@
 export default async (req: any, res: any) => {
   if (req.method === 'GET') {
     const { token } = req.headers;
+    const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
 
     // Send a GET request to Strapi's user endpoint with the JWT token
-    const response = await fetch('127.0.0.1:1337/users/me', {
+    const response = await fetch(`${strapiUrl}/api/users/me`, {
       method: 'GET',
       headers: {
         'Authorization': `Bearer ${token}`,

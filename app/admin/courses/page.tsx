@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import { getStrapiApiUrl } from "@/app/lib/strapiClient";
 import {
     Alert, Button, CircularProgress, FormControl, InputLabel, ListItemText,
     MenuItem, OutlinedInput, Paper, Select, Stack, Table, TableBody, TableCell,
@@ -35,7 +36,6 @@ const emptyForm: CourseFormState = {
     title: "", description: "", user: "", lessons: [], enrolledUsers: [],
     thumbnail: null, thumbnailName: "",
 };
-const apiUrl = "http://localhost:1337/api";
 
 const AdminCoursesPage = () => {
     const router = useRouter();
@@ -71,7 +71,7 @@ const AdminCoursesPage = () => {
     };
 
     const request = async (path: string, token: string, options: RequestInit = {}) => {
-        const response = await fetch(`${apiUrl}${path}`, {
+        const response = await fetch(getStrapiApiUrl(path), {
             ...options,
             headers: {
                 Authorization: `Bearer ${token}`,
