@@ -39,12 +39,15 @@ const Admin = () => {
           ? (JSON.parse(userDataCookie) as {
               authToken?: string;
               roleName?: string;
+              userId?: number;
             })
           : null;
         const authToken = parsedUserData?.authToken;
         const roleName = parsedUserData?.roleName;
+        const currentUserId = Number(parsedUserData?.userId ?? 0);
+        const isInstructor = roleName === "Instructor";
 
-        if (!authToken || !["Admin", "Content Manager"].includes(roleName ?? "")) {
+        if (!authToken || !["Admin", "Content Manager", "Instructor"].includes(roleName ?? "")) {
           setError("You are not authorized to view this page.");
           setLoading(false);
           router.replace("/login");
@@ -55,16 +58,19 @@ const Admin = () => {
           Authorization: `Bearer ${authToken}`,
         };
 
+        const courseFilter = isInstructor && currentUserId
+          ? `?populate=*&filters[user][id][$eq]=${currentUserId}`
+          : "?populate=*";
+        const lessonFilter = isInstructor && currentUserId
+          ? `?populate=*&filters[user][id][$eq]=${currentUserId}`
+          : "?populate=*";
+
         const [usersResponse, coursesResponse, lessonsResponse] = await Promise.all([
-          fetch("http://localhost:1337/api/users", {
-            headers,
-          }),
-          fetch("http://localhost:1337/api/courses?populate=*", {
-            headers,
-          }),
-          fetch("http://localhost:1337/api/lessons?populate=*", {
-            headers,
-          }),
+          isInstructor
+            ? Promise.resolve({ ok: true, json: async () => [] })
+            : fetch("http://localhost:1337/api/users", { headers }),
+          fetch(`http://localhost:1337/api/courses${courseFilter}`, { headers }),
+          fetch(`http://localhost:1337/api/lessons${lessonFilter}`, { headers }),
         ]);
 
         if (!usersResponse.ok && usersResponse.status !== 401) {
@@ -86,7 +92,7 @@ const Admin = () => {
         ]);
 
         setStats({
-          users: Array.isArray(usersData) ? usersData.length : 0,
+          users: isInstructor ? 0 : Array.isArray(usersData) ? usersData.length : 0,
           courses: Array.isArray(coursesData?.data) ? coursesData.data.length : 0,
           lessons: Array.isArray(lessonsData?.data) ? lessonsData.data.length : 0,
         });

@@ -147,9 +147,19 @@ const AdminUsersPage = () => {
 
   useEffect(() => {
     const token = getAuthToken();
+    const userDataCookie = Cookies.get("userData");
+    const parsedUserData = userDataCookie
+      ? (JSON.parse(userDataCookie) as { roleName?: string })
+      : null;
+    const roleName = parsedUserData?.roleName;
 
     if (!token) {
       router.push("/login");
+      return;
+    }
+
+    if (roleName === "Instructor" || roleName === "Content Manager") {
+      router.replace("/admin");
       return;
     }
 

@@ -39,6 +39,17 @@ const apiUrl = "http://localhost:1337/api";
 
 const AdminCoursesPage = () => {
     const router = useRouter();
+    const currentUser = (() => {
+        try {
+            const cookie = Cookies.get("userData");
+            return cookie ? (JSON.parse(cookie) as { userId?: number; roleName?: string }) : null;
+        } catch {
+            Cookies.remove("userData");
+            return null;
+        }
+    })();
+    const currentUserId = Number(currentUser?.userId ?? 0);
+    const isInstructor = currentUser?.roleName === "Instructor";
     const [courses, setCourses] = useState<CourseRecord[]>([]);
     const [users, setUsers] = useState<UserOption[]>([]);
     const [lessons, setLessons] = useState<LessonOption[]>([]);
@@ -76,8 +87,14 @@ const AdminCoursesPage = () => {
     const loadData = async (token: string) => {
         setLoading(true);
         try {
+            const coursePath = isInstructor && currentUserId
+                ? `/courses?populate=*&filters[user][id][$eq]=${currentUserId}`
+                : "/courses?populate=*";
+            const lessonPath = isInstructor && currentUserId
+                ? `/lessons?populate=*&filters[user][id][$eq]=${currentUserId}`
+                : "/lessons?populate=*";
             const [coursePayload, userPayload, lessonPayload] = await Promise.all([
-                request("/courses?populate=*", token), request("/users", token), request("/lessons", token),
+                request(coursePath, token), request("/users", token), request(lessonPath, token),
             ]);
             setCourses(coursePayload?.data ?? []);
             setUsers(Array.isArray(userPayload) ? userPayload : userPayload?.data ?? []);
@@ -109,7 +126,8 @@ const AdminCoursesPage = () => {
         event.preventDefault();
         const token = getToken();
         if (!token) { router.push("/login"); return; }
-        if (!form.title.trim() || !form.description.trim() || !form.user) {
+        const ownerUserId = isInstructor ? currentUserId : Number(form.user);
+        if (!form.title.trim() || !form.description.trim() || !ownerUserId) {
             setError("Title, description, and instructor are required."); return;
         }
         setSubmitting(true); setError(""); setSuccess("");
@@ -118,7 +136,7 @@ const AdminCoursesPage = () => {
             const file = document.querySelector<HTMLInputElement>("#course-thumbnail")?.files?.[0];
             if (file) thumbnailId = await uploadThumbnail(file, token);
             const data = {
-                title: form.title, description: form.description, user: Number(form.user),
+                title: form.title, description: form.description, user: ownerUserId,
                 lessons: form.lessons, enrolledUsers: form.enrolledUsers,
                 ...(thumbnailId ? { thumbnail: thumbnailId } : {}),
             };
@@ -133,10 +151,14 @@ const AdminCoursesPage = () => {
     };
 
     const startEdit = (course: CourseRecord) => {
+        if (isInstructor && course.user?.id && course.user.id !== currentUserId) {
+            setError("You can only edit your own courses.");
+            return;
+        }
         setEditingId(course.documentId ?? String(course.id));
         setForm({
             title: course.title ?? "", description: course.description ?? "",
-            user: course.user?.id ? String(course.user.id) : "",
+            user: course.user?.id ? String(course.user.id) : String(currentUserId),
             lessons: (course.lessons ?? []).map((lesson) => lesson.id),
             enrolledUsers: (course.enrolledUsers ?? []).map((user) => user.id),
             thumbnail: course.thumbnail?.id ?? null, thumbnailName: course.thumbnail?.name ?? "",
@@ -147,6 +169,10 @@ const AdminCoursesPage = () => {
     const deleteCourse = async (course: CourseRecord) => {
         const token = getToken();
         if (!token) { router.push("/login"); return; }
+        if (isInstructor && course.user?.id && course.user.id !== currentUserId) {
+            setError("You can only delete your own courses.");
+            return;
+        }
         if (!window.confirm(`Delete ${course.title ?? "this course"}?`)) return;
         try {
             await request(`/courses/${course.documentId ?? course.id}`, token, { method: "DELETE" });

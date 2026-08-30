@@ -92,7 +92,7 @@ const LoginPage: React.FC = () => {
           }),
         );
 
-        if (["Admin", "Content Manager"].includes(roleName)) {
+        if (["Admin", "Content Manager", "Instructor"].includes(roleName)) {
           router.push("/admin");
         } else if (roleName === "Authenticated") {
           router.push("/profile");

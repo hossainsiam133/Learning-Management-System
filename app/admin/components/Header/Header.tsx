@@ -25,6 +25,8 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
     const router = useRouter(); // Initialize the useRouter hook
     const isContentManager = userData?.roleName === "Content Manager";
+    const isInstructor = userData?.roleName === "Instructor";
+    const isUsersRestricted = isContentManager || isInstructor;
 
     const handleSignOut = () => {
         router.push("/logout");
@@ -66,7 +68,7 @@ const Header: React.FC<HeaderProps> = ({
                                 </Link>
                             </li>
                             <li>
-                                {isContentManager ? (
+                                {isUsersRestricted ? (
                                     <Typography
                                         sx={{
                                             opacity: 0.5,

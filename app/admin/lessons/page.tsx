@@ -26,6 +26,10 @@ interface LessonRecord {
   description?: string;
   video_url?: string;
   duration?: string;
+  user?: {
+    id?: number;
+    username?: string;
+  } | null;
 }
 
 interface LessonFormState {
@@ -46,6 +50,17 @@ const apiUrl = "http://localhost:1337/api";
 
 const AdminLessonsPage = () => {
   const router = useRouter();
+  const currentUser = (() => {
+    try {
+      const cookie = Cookies.get("userData");
+      return cookie ? (JSON.parse(cookie) as { userId?: number; roleName?: string }) : null;
+    } catch {
+      Cookies.remove("userData");
+      return null;
+    }
+  })();
+  const currentUserId = Number(currentUser?.userId ?? 0);
+  const isInstructor = currentUser?.roleName === "Instructor";
   const [lessons, setLessons] = useState<LessonRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -88,7 +103,10 @@ const AdminLessonsPage = () => {
     setError("");
 
     try {
-      const payload = await request("/lessons", token);
+      const lessonPath = isInstructor && currentUserId
+        ? `/lessons?populate=*&filters[user][id][$eq]=${currentUserId}`
+        : "/lessons?populate=*";
+      const payload = await request(lessonPath, token);
       setLessons(payload?.data ?? []);
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Failed to load lessons.");
@@ -118,6 +136,10 @@ const AdminLessonsPage = () => {
   };
 
   const startEdit = (lesson: LessonRecord) => {
+    if (isInstructor && lesson.user && lesson.user.id !== currentUserId) {
+      setError("You can only edit your own lessons.");
+      return;
+    }
     setEditingDocumentId(lesson.documentId ?? String(lesson.id));
     setError("");
     setSuccess("");
@@ -139,8 +161,9 @@ const AdminLessonsPage = () => {
       return;
     }
 
-    if (!form.title.trim() || !form.description.trim() || !form.video_url.trim()) {
-      setError("Title, description, and video URL are required.");
+    const ownerUserId = isInstructor ? currentUserId : null;
+    if (!form.title.trim() || !form.description.trim() || !form.video_url.trim() || (isInstructor && !ownerUserId)) {
+      setError("Title, description, video URL, and instructor ownership are required.");
       setSuccess("");
       return;
     }
@@ -161,6 +184,7 @@ const AdminLessonsPage = () => {
             description: form.description,
             video_url: form.video_url,
             duration: form.duration || "0:00 m",
+            ...(isInstructor ? { user: ownerUserId } : {}),
           },
         }),
       });
@@ -182,6 +206,11 @@ const AdminLessonsPage = () => {
 
     if (!token) {
       router.push("/login");
+      return;
+    }
+
+    if (isInstructor && lesson.user && lesson.user.id !== currentUserId) {
+      setError("You can only delete your own lessons.");
       return;
     }
 
