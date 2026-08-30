@@ -5,29 +5,64 @@ import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import scss from "./login.module.scss";
 import { Typography } from "@mui/material";
+import { useRouter } from "next/navigation";
 
 interface UserData {
   authToken: string;
   userId?: number;
   userName: string;
   isLoggedIn: boolean;
+  roleName?: string;
 }
 
 const LoginPage: React.FC = () => {
+  const router = useRouter();
   const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loginError, setLoginError] = useState("");
   const [userData, setUserData] = useState<UserData | null>(null);
 
   useEffect(() => {
-    // When reading the cookie, parse the JSON data
     const userDataCookie = Cookies.get("userData");
-    const parsedUserData = JSON.parse(userDataCookie || "{}") as UserData; // Explicitly cast to UserData
-    setUserData(parsedUserData);
+
+    if (!userDataCookie) {
+      setUserData(null);
+      return;
+    }
+
+    try {
+      const parsedUserData = JSON.parse(userDataCookie) as UserData;
+      setUserData(parsedUserData);
+    } catch {
+      Cookies.remove("userData");
+      setUserData(null);
+    }
   }, []);
 
-  const handleLogin = async (e: any) => {
+  const getRoleName = async (token: string): Promise<string | null> => {
+    try {
+      const response = await fetch("http://localhost:1337/api/users/me?populate=role", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      const user = await response.json();
+      return user?.role?.name ?? null;
+    } catch (error) {
+      console.error("Failed to fetch user role:", error);
+      return null;
+    }
+  };
+
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoginError("");
+
     try {
       const response = await fetch("http://localhost:1337/api/auth/local", {
         method: "POST",
@@ -37,23 +72,27 @@ const LoginPage: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Format the user-related data before storing in the cookie
+        const authToken = data.jwt;
+        const roleName = (await getRoleName(authToken)) ?? data.user?.role?.name ?? null;
+
         const userData = {
-          authToken: data.jwt,
+          authToken,
           userId: Number(data.user.id),
           userName: data.user.username,
-          isLoggedIn: data.user.confirmed,
+          isLoggedIn: Boolean(data.user.confirmed),
+          roleName: roleName ?? undefined,
         };
 
-        Cookies.set("userData", JSON.stringify(userData), { expires: 7 }); // Expires in 7 days
-
-        // Update the user data in the state to trigger re-render
+        Cookies.set("userData", JSON.stringify(userData), { expires: 7 });
         setUserData(userData);
-        location.reload();
-        // Redirect to the profile page
-        // router.push('/profile'); // Replace '/profile' with your actual profile page route
+
+        if (roleName === "Admin") {
+          router.push("/admin");
+        } else if (roleName === "Authenticated") {
+          router.push("/profile");
+        }
       } else {
-        setLoginError(data.message[0].messages[0].message);
+        setLoginError(data?.message?.[0]?.messages?.[0]?.message ?? "Login failed.");
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -62,12 +101,9 @@ const LoginPage: React.FC = () => {
   };
 
   const handleSignOut = () => {
-    // Remove the userData cookie to log the user out
     Cookies.remove("userData");
-    // Clear the user data from state to trigger re-render
     setUserData(null);
-    location.reload();
-    // router.push('/login'); // Replace '/profile' with your actual profile page route
+    router.push("/login");
   };
 
   return (

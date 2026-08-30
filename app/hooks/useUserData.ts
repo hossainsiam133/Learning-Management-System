@@ -7,6 +7,7 @@ export type UserDataType = {
     userId?: number;
     userName: string;
     isLoggedIn: boolean;
+    roleName?: string;
 };
 
 const useUserData = () => {

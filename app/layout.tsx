@@ -1,9 +1,11 @@
 "use client";
 import { Metadata } from "next";
 import React, { createContext, useEffect, useMemo, useState } from "react";
-import Header from "@/app/components/Header";
+import DefaultHeader from "@/app/components/Header";
+import AdminHeader from "@/app/admin/components/Header";
 import useUserData from "@/app/hooks/useUserData";
-import { createTheme, ThemeProvider } from "@mui/material/styles"; import darkTheme from "@/app/theme/darkTheme";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
+import darkTheme from "@/app/theme/darkTheme";
 import lightTheme from "@/app/theme/lightTheme";
 import CssBaseline from "@mui/material/CssBaseline";
 
@@ -48,6 +50,8 @@ export default function RootLayout({
   );
 
   const userData = useUserData();
+  const isAdminUser = userData?.roleName === "Admin";
+  const HeaderComponent = isAdminUser ? AdminHeader : DefaultHeader;
 
   const chosenTheme = mode === "dark" ? darkTheme : lightTheme;
 
@@ -80,7 +84,7 @@ export default function RootLayout({
               margin: "auto",
             }}
           >
-            <Header
+            <HeaderComponent
               userData={userData}
               ColorModeContext={ThemeMUIMode}
               currentMode={mode}
