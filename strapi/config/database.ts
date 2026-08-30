@@ -3,7 +3,8 @@ import type { Core } from '@strapi/strapi';
 import { isDatabaseClientKind } from '@strapi/database';
 
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Database => {
-  const client = env('DATABASE_CLIENT', 'sqlite');
+  const hasDatabaseUrl = Boolean(env('DATABASE_URL', ''));
+  const client = env('DATABASE_CLIENT', hasDatabaseUrl ? 'postgres' : 'sqlite');
 
   if (!isDatabaseClientKind(client)) {
     throw new Error(
