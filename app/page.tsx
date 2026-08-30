@@ -1,8 +1,12 @@
-'use client';
+"use client";
+import React from "react";
 import Image from "next/image";
 import styles from './page.module.css'
 import { useState } from 'react';
 import Button from "@mui/material/Button";
+import CourseGrid from "@/app/components/CourseGrid/CourseGrid";
+import useFetchCoursesData from "./hooks/useFetchCourseData";
+import wrapper from './courses/courses.module.scss';
 export default function Home() {
   const [course, setCourseData] = useState();
   async function fetchQuery() {
@@ -13,13 +17,20 @@ export default function Home() {
     console.log(data);
     return data;
   }
+  const courses = useFetchCoursesData();
+  const enrolledCourses = useFetchCoursesData({ authOnly: true });
+  const enrolledCourseIds = enrolledCourses.map((course: any) =>
+    String(course?.documentId ?? course?.id ?? ""),
+  );
+
   return (
     <main className={styles.main}>
       <div className={styles.description}>
-        Learning Management System
-        <Button variant='contained' onClick={() => fetchQuery()}>Courses</Button>
+        {/* Learning Management System */}
       </div>
-      <div>{course?.title}</div>
+      <div >
+        <CourseGrid courseData={courses} disabledCourseIds={enrolledCourseIds} />
+      </div>
     </main>
   );
 }

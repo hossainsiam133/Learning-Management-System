@@ -53,11 +53,19 @@ const normalizeVideoUrl = (videoUrl?: string): string => {
 
 const CoursePage = () => {
   const params = useParams();
-  const courseId = Number(params.course_id);
-  const courses = useFetchCoursesData();
+  const routeCourseKey = String(params.course_id ?? "");
+  const publicCourses = useFetchCoursesData();
+  const enrolledCourses = useFetchCoursesData({ authOnly: true });
   const course =
-    courses.find((item: any) => Number(item?.id ?? item?.documentId) === courseId) ??
-    courses[0];
+    publicCourses.find(
+      (item: any) => String(item?.documentId ?? item?.id ?? "") === routeCourseKey,
+    ) ?? publicCourses[0];
+
+  const enrolledCourseKeys = enrolledCourses.map((item: any) =>
+    String(item?.documentId ?? item?.id ?? ""),
+  );
+
+  const isEnrolled = enrolledCourseKeys.includes(routeCourseKey);
 
   const rawLessons = Array.isArray(course?.lessons)
     ? course.lessons
@@ -90,6 +98,31 @@ const CoursePage = () => {
   const lessonVideoUrl = normalizeVideoUrl(
     selectedLesson?.video_url ?? selectedLesson?.attributes?.video_url,
   );
+
+  if (!isEnrolled) {
+    return (
+      <div>
+        <CourseHeader
+          title={course?.title}
+          description={course?.description}
+          user={course?.user?.data?.username}
+        />
+        <Box
+          className={scss.courseFrame}
+          sx={{
+            bgcolor: "background.paper",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            minHeight: "10rem",
+            p: 3,
+          }}
+        >
+          Enroll in this course to unlock the lessons and video content.
+        </Box>
+      </div>
+    );
+  }
 
   return (
     <div>

@@ -13,42 +13,50 @@ const LogoutPage = () => {
 
     useEffect(() => {
         const userDataCookie = Cookies.get('userData');
-        const parsedUserData = JSON.parse(userDataCookie || '{}') as UserDataType; // Explicitly cast to UserData
-        setUserData(parsedUserData);
+
+        if (!userDataCookie) {
+            setUserData(null);
+            return;
+        }
+
+        try {
+            const parsedUserData = JSON.parse(userDataCookie) as UserDataType;
+            setUserData(parsedUserData);
+        } catch {
+            Cookies.remove('userData');
+            setUserData(null);
+        }
     }, []);
 
     const handleSignOut = () => {
         Cookies.remove('userData');
         setUserData(null);
-        location.reload()
+        router.push('/login');
     };
 
     const handleSignIn = () => {
         router.push('/login');
-
-        console.log(userData)
-
-        return (
-            <div className={scss.logout}>
-                {
-                    userData?.isLoggedIn ? (
-                        <>
-                            <Typography variant={'h6'}>Are you sure you want to sign out?</Typography>
-                            <Button variant="contained" onClick={handleSignOut}>
-                                Sign Out
-                            </Button>
-                        </>
-                    ) : (
-                        <>
-                            <Typography variant={'h6'}>Thank you for signing out</Typography>
-                            <Button variant="contained" onClick={handleSignIn}>
-                                Sign In
-                            </Button>
-                        </>
-                    )
-                }
-            </div>
-        );
     };
-}
+
+    return (
+        <div className={scss.logout}>
+            {userData?.isLoggedIn ? (
+                <>
+                    <Typography variant={'h6'}>Are you sure you want to sign out?</Typography>
+                    <Button variant="contained" onClick={handleSignOut}>
+                        Sign Out
+                    </Button>
+                </>
+            ) : (
+                <>
+                    <Typography variant={'h6'}>Thank you for signing out</Typography>
+                    <Button variant="contained" onClick={handleSignIn}>
+                        Sign In
+                    </Button>
+                </>
+            )}
+        </div>
+    );
+};
+
 export default LogoutPage;

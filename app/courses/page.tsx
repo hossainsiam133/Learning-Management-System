@@ -5,7 +5,11 @@ import CourseGrid from "@/app/components/CourseGrid/CourseGrid";
 import CourseHeader from "@/app/components/CourseHeader";
 
 const CoursePage = () => {
-    const courses = useFetchCoursesData();
+    const courses = useFetchCoursesData({ authOnly: false });
+    const enrolledCourses = useFetchCoursesData({ authOnly: true });
+    const enrolledCourseIds = enrolledCourses.map((course: any) =>
+        String(course?.documentId ?? course?.id ?? ""),
+    );
 
     return (
         <div>
@@ -16,7 +20,7 @@ const CoursePage = () => {
                     "Choose from our many courses and start your learning journey today!"
                 }
             />
-            <CourseGrid courseData={courses} />
+            <CourseGrid courseData={courses} disabledCourseIds={enrolledCourseIds} />
         </div>
     );
 };

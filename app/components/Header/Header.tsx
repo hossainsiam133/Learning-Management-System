@@ -7,6 +7,8 @@ import scss from "./Header.module.scss";
 import { Typography } from "@mui/material";
 import ThemeToggleButton from "@/app/components/ThemeToggleButton";
 import { UserDataType } from "@/app/hooks/useUserData";
+import Cookies from "js-cookie";
+
 
 interface HeaderProps {
   userData: UserDataType | null;
@@ -37,15 +39,15 @@ const Header: React.FC<HeaderProps> = ({
           <li>
             <Button variant={"text"} href={"/"}>
               <Typography variant={"h6"} style={{ textTransform: "initial" }}>
-                CuriousCourses
+                CPS Academy
               </Typography>
             </Button>
           </li>
-          <li>
+          {/* <li>
             <Link href="/">
               <Typography>Home</Typography>
             </Link>
-          </li>
+          </li> */}
           {!userData ? (
             <>
               <li>
@@ -64,6 +66,11 @@ const Header: React.FC<HeaderProps> = ({
               <li>
                 <Link href="/courses">
                   <Typography>Courses</Typography>
+                </Link>
+              </li>
+              <li>
+                <Link href="/my-courses">
+                  <Typography>My Courses</Typography>
                 </Link>
               </li>
             </>

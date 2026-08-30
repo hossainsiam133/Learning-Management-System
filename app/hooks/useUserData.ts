@@ -4,6 +4,7 @@ import Cookies from 'js-cookie';
 
 export type UserDataType = {
     authToken: string;
+    userId?: number;
     userName: string;
     isLoggedIn: boolean;
 };

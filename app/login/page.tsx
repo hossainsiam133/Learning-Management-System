@@ -8,6 +8,7 @@ import { Typography } from "@mui/material";
 
 interface UserData {
   authToken: string;
+  userId?: number;
   userName: string;
   isLoggedIn: boolean;
 }
@@ -39,6 +40,7 @@ const LoginPage: React.FC = () => {
         // Format the user-related data before storing in the cookie
         const userData = {
           authToken: data.jwt,
+          userId: Number(data.user.id),
           userName: data.user.username,
           isLoggedIn: data.user.confirmed,
         };
@@ -108,8 +110,42 @@ const LoginPage: React.FC = () => {
       )}
       {userData?.isLoggedIn && (
         <div>
-          <p>Logged in as: {userData.userName}</p>
-          <p>Is logged in: {userData.isLoggedIn ? "Yes" : "No"}</p>
+          <div style={{ marginBottom: "1rem" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "0.75rem 1rem",
+                borderRadius: "0.5rem",
+                backgroundColor: "rgba(46, 125, 50, 0.12)",
+                color: "#1b5e20",
+                fontWeight: 600,
+                width: "100%",
+                boxSizing: "border-box",
+              }}
+            >
+              Logged in as: {userData.userName}
+            </div>
+          </div>
+
+          <div style={{ marginBottom: "1rem" }}>
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                padding: "0.75rem 1rem",
+                borderRadius: "0.5rem",
+                backgroundColor: "rgba(25, 118, 210, 0.1)",
+                color: "#0d47a1",
+                fontWeight: 500,
+                width: "100%",
+                boxSizing: "border-box",
+              }}
+            >
+              Status: {userData.isLoggedIn ? "Active Session" : "Inactive"}
+            </div>
+          </div>
+
           <Button variant="contained" onClick={handleSignOut} color={"error"}>
             Sign Out
           </Button>

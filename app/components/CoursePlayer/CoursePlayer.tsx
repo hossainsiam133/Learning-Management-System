@@ -4,6 +4,7 @@ import PsychologyAltIcon from "@mui/icons-material/PsychologyAlt";
 import { Paper, Typography } from "@mui/material";
 import { LessonType } from "@/app/courses/course.types";
 import { useSearchParams } from "next/navigation";
+import Cookies from "js-cookie";
 
 const normalizeVideoUrl = (videoUrl?: string): string => {
   const rawValue = (videoUrl ?? "").trim();
@@ -57,10 +58,31 @@ const CoursePlayer = (props: CoursePlayerProps) => {
   const { lessons, lessonVideoUrl } = props;
   const validLessonVideoUrl = normalizeVideoUrl(lessonVideoUrl);
   const [selectedLessonId, setSelectedLessonId] = useState<number | null>(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const searchParams = useSearchParams();
   const lessonParamId = searchParams.get("lessonId");
   const hasLessons = Array.isArray(lessons) && lessons.length > 0;
   const hasVideoUrl = Boolean(validLessonVideoUrl && validLessonVideoUrl.trim());
+
+  useEffect(() => {
+    const userDataCookie = Cookies.get("userData");
+
+    if (!userDataCookie) {
+      setIsLoggedIn(false);
+      return;
+    }
+
+    try {
+      const parsedUserData = JSON.parse(userDataCookie) as {
+        authToken?: string;
+        isLoggedIn?: boolean;
+        userId?: number;
+      };
+      setIsLoggedIn(Boolean(parsedUserData.authToken && parsedUserData.userId));
+    } catch {
+      setIsLoggedIn(false);
+    }
+  }, []);
 
   useEffect(() => {
     // Checks and updates selectedLessonId when lessonParamId changes on page load
@@ -79,7 +101,15 @@ const CoursePlayer = (props: CoursePlayerProps) => {
         maxHeight: "30rem",
       }}
     >
-      {!hasLessons || !hasVideoUrl ? (
+      {!isLoggedIn ? (
+        <div style={{ display: "block", textAlign: "center" }}>
+          <PsychologyAltIcon
+            color={"warning"}
+            style={{ fontSize: "5rem" }}
+          ></PsychologyAltIcon>
+          <Typography>Login First</Typography>
+        </div>
+      ) : !hasLessons || !hasVideoUrl ? (
         <div style={{ display: "block", textAlign: "center" }}>
           <PsychologyAltIcon
             color={"error"}

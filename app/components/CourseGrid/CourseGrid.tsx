@@ -5,13 +5,16 @@ import { CourseDataType } from "@/app/courses/course.types";
 
 export type CourseGridProps = {
   courseData: CourseDataType[];
+  isEnrollDisabled?: boolean;
+  disabledCourseIds?: Array<string | number>;
 };
 
 const CourseGrid = (props: CourseGridProps) => {
-  const { courseData } = props;
+  const { courseData, isEnrollDisabled = false, disabledCourseIds = [] } = props;
+  const disabledCourseKeySet = new Set(disabledCourseIds.map((id) => String(id)));
 
   return (
-    <section className={scss.CourseGrid}>
+    <section className={scss.CourseCardWrapper}>
       {courseData.map((course: CourseDataType) => {
         const thumbnailUrl =
           course?.thumbnail?.url ??
@@ -21,13 +24,17 @@ const CourseGrid = (props: CourseGridProps) => {
           course?.attributes?.thumbnail?.data?.attributes?.url ??
           "";
 
+        const courseKey = String(course?.documentId ?? course?.id ?? "");
+        const isCourseDisabled = isEnrollDisabled || disabledCourseKeySet.has(courseKey);
+
         return (
-          <div key={course.id}>
+          <div key={courseKey || course.id}>
             <CourseCard
-              courseId={course.id}
+              courseId={courseKey || String(course.id ?? "")}
               title={course?.title ?? course?.attributes?.title ?? ""}
               thumbnail={thumbnailUrl || undefined}
               description={course?.description ?? course?.attributes?.description ?? ""}
+              isEnrollDisabled={isCourseDisabled}
             />
           </div>
         );

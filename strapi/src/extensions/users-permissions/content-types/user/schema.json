@@ -74,6 +74,12 @@
     },
     "courseProgress": {
       "type": "json"
+    },
+    "enrolledCourses": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "api::course.course",
+      "mappedBy": "enrolledUsers"
     }
   }
 }

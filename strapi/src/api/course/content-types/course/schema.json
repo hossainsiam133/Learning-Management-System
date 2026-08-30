@@ -27,6 +27,12 @@
       "relation": "oneToMany",
       "target": "api::lesson.lesson"
     },
+    "enrolledUsers": {
+      "type": "relation",
+      "relation": "manyToMany",
+      "target": "plugin::users-permissions.user",
+      "inversedBy": "enrolledCourses"
+    },
     "thumbnail": {
       "type": "media",
       "multiple": false,

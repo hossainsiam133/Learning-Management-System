@@ -24,6 +24,10 @@ const nextConfig = {
         hostname: "::1",
         port: "1337",
       },
+      {
+        protocol: "https",
+        hostname: "placehold.co",
+      },
     ],
     dangerouslyAllowLocalIP: true,
   },
