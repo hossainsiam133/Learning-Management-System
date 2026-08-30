@@ -50,7 +50,7 @@ export default function RootLayout({
   );
 
   const userData = useUserData();
-  const isAdminUser = userData?.roleName === "Admin";
+  const isAdminUser = ["Admin", "Content Manager"].includes(userData?.roleName ?? "");
   const HeaderComponent = isAdminUser ? AdminHeader : DefaultHeader;
 
   const chosenTheme = mode === "dark" ? darkTheme : lightTheme;

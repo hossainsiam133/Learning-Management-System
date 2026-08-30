@@ -13,22 +13,43 @@ export type UserDataType = {
 const useUserData = () => {
     const [userData, setUserData] = useState<UserDataType | null>(null);
 
-    useEffect(() => {
-        const userDataCookie = Cookies.get('userData');
-        const parsedUserData = JSON.parse(userDataCookie || '{}') as UserDataType;
-        setUserData(parsedUserData);
+    const readUserData = () => {
+        try {
+            const userDataCookie = Cookies.get('userData');
+            if (!userDataCookie) {
+                return null;
+            }
 
-        // Listen for the storage event to update the user data
+            return JSON.parse(userDataCookie) as UserDataType;
+        } catch {
+            Cookies.remove('userData');
+            return null;
+        }
+    };
+
+    useEffect(() => {
+        setUserData(readUserData());
+
         const storageEventListener = (event: StorageEvent) => {
-            if (event.key === 'userData') {
-                const updatedUserData = JSON.parse(event.newValue || '{}') as UserDataType;
-                setUserData(updatedUserData);
+            if (event.key !== 'userData') {
+                return;
+            }
+
+            const nextValue = event.newValue;
+            if (!nextValue) {
+                setUserData(null);
+                return;
+            }
+
+            try {
+                setUserData(JSON.parse(nextValue) as UserDataType);
+            } catch {
+                setUserData(null);
             }
         };
 
         window.addEventListener('storage', storageEventListener);
 
-        // Clean up the event listener 
         return () => {
             window.removeEventListener('storage', storageEventListener);
         };

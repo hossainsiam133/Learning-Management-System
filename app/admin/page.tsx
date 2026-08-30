@@ -44,7 +44,7 @@ const Admin = () => {
         const authToken = parsedUserData?.authToken;
         const roleName = parsedUserData?.roleName;
 
-        if (!authToken || roleName !== "Admin") {
+        if (!authToken || !["Admin", "Content Manager"].includes(roleName ?? "")) {
           setError("You are not authorized to view this page.");
           setLoading(false);
           router.replace("/login");

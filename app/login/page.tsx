@@ -70,23 +70,29 @@ const LoginPage: React.FC = () => {
         body: JSON.stringify({ identifier, password }),
       });
       const data = await response.json();
-
+      // console.log("Hello"+data.user?.role?.name);
       if (response.ok) {
         const authToken = data.jwt;
-        const roleName = (await getRoleName(authToken)) ?? data.user?.role?.name ?? null;
+        const roleName = ((await getRoleName(authToken)) ?? data.user?.role?.name ?? "Authenticated").trim();
 
         const userData = {
           authToken,
           userId: Number(data.user.id),
           userName: data.user.username,
           isLoggedIn: Boolean(data.user.confirmed),
-          roleName: roleName ?? undefined,
+          roleName: roleName || "Authenticated",
         };
 
         Cookies.set("userData", JSON.stringify(userData), { expires: 7 });
         setUserData(userData);
+        window.dispatchEvent(
+          new StorageEvent("storage", {
+            key: "userData",
+            newValue: JSON.stringify(userData),
+          }),
+        );
 
-        if (roleName === "Admin") {
+        if (["Admin", "Content Manager"].includes(roleName)) {
           router.push("/admin");
         } else if (roleName === "Authenticated") {
           router.push("/profile");

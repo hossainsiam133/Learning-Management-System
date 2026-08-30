@@ -24,6 +24,8 @@ const Header: React.FC<HeaderProps> = ({
     showLabel,
 }) => {
     const router = useRouter(); // Initialize the useRouter hook
+    const isContentManager = userData?.roleName === "Content Manager";
+
     const handleSignOut = () => {
         router.push("/logout");
     };
@@ -64,9 +66,22 @@ const Header: React.FC<HeaderProps> = ({
                                 </Link>
                             </li>
                             <li>
-                                <Link href="/admin/users">
-                                    <Typography>Users</Typography>
-                                </Link>
+                                {isContentManager ? (
+                                    <Typography
+                                        sx={{
+                                            opacity: 0.5,
+                                            pointerEvents: "none",
+                                            userSelect: "none",
+                                            cursor: "not-allowed",
+                                        }}
+                                    >
+                                        Users
+                                    </Typography>
+                                ) : (
+                                    <Link href="/admin/users" aria-disabled={false}>
+                                        <Typography>Users</Typography>
+                                    </Link>
+                                )}
                             </li>
                             <li>
                                 <Link href="/admin/courses">
