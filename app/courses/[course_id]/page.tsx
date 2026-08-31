@@ -135,7 +135,7 @@ const CoursePage = () => {
         <CourseList
           lessons={lessons}
           lessonAmount={lessonAmount}
-          courseId={courseId}
+          courseId={routeCourseKey}
         />
         <CoursePlayer lessons={lessons} lessonVideoUrl={lessonVideoUrl} />
       </Box>

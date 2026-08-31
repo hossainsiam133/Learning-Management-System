@@ -68,7 +68,7 @@ const Admin = () => {
         const strapiUrl = process.env.NEXT_PUBLIC_STRAPI_URL ?? "http://localhost:1337";
         const [usersResponse, coursesResponse, lessonsResponse] = await Promise.all([
           isInstructor
-            ? Promise.resolve({ ok: true, json: async () => [] })
+            ? Promise.resolve({ ok: true, status: 200, json: async () => [] })
             : fetch(`${strapiUrl}/api/users`, { headers }),
           fetch(`${strapiUrl}/api/courses${courseFilter}`, { headers }),
           fetch(`${strapiUrl}/api/lessons${lessonFilter}`, { headers }),
@@ -135,7 +135,7 @@ const Admin = () => {
         ) : null}
 
         {loading ? (
-          <Stack sx={{ alignItems: "center" }} py={4}>
+          <Stack sx={{ alignItems: "center", py: 4 }}>
             <CircularProgress />
           </Stack>
         ) : (

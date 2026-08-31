@@ -1,5 +1,6 @@
 export type CourseDataType = {
   id?: number;
+  documentId?: string;
   title?: string;
   description?: string;
   attributes?: {

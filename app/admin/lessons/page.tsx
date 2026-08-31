@@ -302,7 +302,7 @@ const AdminLessonsPage = () => {
         </Typography>
 
         {loading ? (
-          <Stack sx={{ alignItems: "center" }} py={3}>
+          <Stack sx={{ alignItems: "center", py: 3 }}>
             <CircularProgress />
           </Stack>
         ) : lessons.length === 0 ? (
@@ -337,7 +337,7 @@ const AdminLessonsPage = () => {
                     </TableCell>
                     <TableCell>{lesson.duration || "-"}</TableCell>
                     <TableCell align="right">
-                      <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
                         <Button
                           variant="outlined"
                           color="primary"

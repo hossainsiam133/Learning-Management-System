@@ -107,11 +107,11 @@ const AdminUsersPage = () => {
           : [];
 
       const formattedRoles = roles
-        .map((role: any) => ({
+        .map((role: { id?: number | string; name?: string }) => ({
           id: Number(role.id),
           name: String(role.name ?? ""),
         }))
-        .filter((role) => role.id && role.name);
+        .filter((role: { id: number; name: string }) => role.id && role.name);
 
       setAvailableRoles(formattedRoles);
     } catch {
@@ -490,7 +490,7 @@ const AdminUsersPage = () => {
         </Typography>
 
         {loading ? (
-          <Stack sx={{ alignItems: "center" }} py={3}>
+          <Stack sx={{ alignItems: "center", py: 3 }}>
             <CircularProgress />
           </Stack>
         ) : users.length === 0 ? (
@@ -519,7 +519,7 @@ const AdminUsersPage = () => {
                     <TableCell>{user.blocked ? "Yes" : "No"}</TableCell>
                     <TableCell>{user.role?.name || "-"}</TableCell>
                     <TableCell align="right">
-                      <Stack direction="row" spacing={1} justifyContent="flex-end">
+                      <Stack direction="row" spacing={1} sx={{ justifyContent: "flex-end" }}>
                         <Button
                           variant="outlined"
                           color="primary"

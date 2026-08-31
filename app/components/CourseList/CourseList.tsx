@@ -9,7 +9,7 @@ import { useTheme } from "@mui/material/styles";
 export type CourseListProps = {
   lessons: LessonType[];
   lessonAmount: number;
-  courseId: number;
+  courseId: string | number;
 };
 
 const CourseList = (props: CourseListProps) => {
