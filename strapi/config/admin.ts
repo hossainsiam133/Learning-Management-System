@@ -1,19 +1,29 @@
 import type { Core } from '@strapi/strapi';
 
+const requireEnv = (env: Core.Config.Shared.ConfigParams['env'], key: string): string => {
+  const value = env(key, '');
+
+  if (!value || value === 'tobemodified' || value === 'toBeModified1') {
+    throw new Error(`${key} is missing or still using the default placeholder value in strapi/.env.`);
+  }
+
+  return value;
+};
+
 const config = ({ env }: Core.Config.Shared.ConfigParams): Core.Config.Admin => ({
   auth: {
-    secret: env('ADMIN_JWT_SECRET')!,
+    secret: requireEnv(env, 'ADMIN_JWT_SECRET'),
   },
   apiToken: {
-    salt: env('API_TOKEN_SALT')!,
+    salt: requireEnv(env, 'API_TOKEN_SALT'),
   },
   transfer: {
     token: {
-      salt: env('TRANSFER_TOKEN_SALT')!,
+      salt: requireEnv(env, 'TRANSFER_TOKEN_SALT'),
     },
   },
   secrets: {
-    encryptionKey: env('ENCRYPTION_KEY')!,
+    encryptionKey: requireEnv(env, 'ENCRYPTION_KEY'),
   },
   flags: {
     nps: env.bool('FLAG_NPS', true),
