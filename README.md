@@ -2,6 +2,8 @@
 
 This is an E-learning platform with NextJS16, Headless Strapi CMS.
 
+## Frontend URL: https://learning-management-system-46zfzaecd-cpsiam221-7206s-projects.vercel.app/
+## Backend URL: https://learning-management-system-production-1f10.up.railway.app/
 ## Getting Started
 
 First, run the development server:
